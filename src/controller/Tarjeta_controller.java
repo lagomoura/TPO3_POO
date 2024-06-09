@@ -1,10 +1,10 @@
 package controller;
-
-
 import model.*;
 import dto.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static java.lang.Float.*;
 
 public class Tarjeta_controller {
     private Collection<Tarjeta> tarjetas;
@@ -27,42 +27,59 @@ public class Tarjeta_controller {
         if (clienteTiene_tc(cliente)) {
             System.out.println("Cliente ya pose una tarjeta de credito");
             return false;
+        } else {
+            Tarjeta_credito tarjeta = new Tarjeta_credito(cliente, new ArrayList<>(), num_tarjeta, interes);
+            tarjetas.add(tarjeta);
+            return true;
         }
-        Tarjeta_credito tarjeta = new Tarjeta_credito(cliente, new ArrayList<>(), num_tarjeta, interes);
-        tarjetas.add(tarjeta);
-        System.out.println("Tarjeta de credito creada con suceso!");
-        return true;
     }
 
     public boolean altaTarjeta_debito(Cliente cliente, String num_tarjeta, float devolucion_iva) {
         if (clienteTiene_td(cliente)) {
-            System.out.println("Cliente ya pose una tarjeta de debito");
+            System.out.println("Cliente ya pose una tarjeta de credito");
             return false;
+        } else {
+            Tarjeta_debito tarjeta = new Tarjeta_debito(cliente, new ArrayList<>(), num_tarjeta, devolucion_iva);
+            tarjetas.add(tarjeta);
+            return true;
         }
-        Tarjeta_debito tarjeta = new Tarjeta_debito(cliente, new ArrayList<>(), num_tarjeta, devolucion_iva);
-        return true;
+
     }
 
     public boolean clienteTiene_tc(Cliente cliente) {
         for (Tarjeta tarjeta : tarjetas) {
-            if (tarjeta instanceof Tarjeta_credito && tarjeta.getCliente().getDni() == cliente.getDni()) {
+            if (tarjeta instanceof Tarjeta_credito && String.valueOf(tarjeta.getCliente().getDni()).equals(cliente.getDni())) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean clienteTiene_td(Cliente cliente) {
+        public boolean clienteTiene_td(Cliente cliente) {
+            for (Tarjeta tarjeta : tarjetas) {
+                if (tarjeta instanceof Tarjeta_debito && String.valueOf(tarjeta.getCliente().getDni()).equals(cliente.getDni())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    public void registro_consumo(String numTarjeta, Consumo_DTO consumo_dto) {
         for (Tarjeta tarjeta : tarjetas) {
-            if (tarjeta instanceof Tarjeta_debito && tarjeta.getCliente().getDni() == cliente.getDni()) {
-                return true;
+            if (tarjeta.getNum_tarjeta().equals(numTarjeta)) {
+                Consumo consumo = new Consumo(
+                        Integer.parseInt(consumo_dto.getNum_tarjeta()),
+                        Integer.parseInt(consumo_dto.getMes()),
+                        consumo_dto.getNombre_establecimiento(),
+                        Integer.parseInt(consumo_dto.getAno()),
+                        parseFloat(consumo_dto.getTotal()));
+
+                tarjeta.getConsumo().add(consumo);
+                System.out.println("Consumo registrado con suceso en tarjeta Nro: " + numTarjeta + " Valor: " + "$" + consumo_dto.getTotal() + " Mes: " + consumo_dto.getMes() + " Ano: " + consumo_dto.getAno() + " Establecimiento: " + consumo_dto.getNombre_establecimiento());
+                return;
             }
         }
-        return false;
-    }
-
-    public void registro_consumo(Tarjeta tarjeta, Consumo consumo) {
-        tarjeta.getConsumo().add(consumo);
+        System.out.println("No se encontro la tarjeta " + numTarjeta);
     }
 
 
@@ -74,6 +91,7 @@ public class Tarjeta_controller {
                 float interes = tarjeta_credito.getInteres();
                 for (Consumo consumo : tarjeta_credito.getConsumo()) {
                     total += consumo.getTotal() * (1 + (interes / 100));
+                    System.out.println("Valor total de consumo, sumando el interes. Tarjeta: " + tarjeta.getNum_tarjeta() + " $" + total);
                 }
             }
         }
@@ -87,7 +105,8 @@ public class Tarjeta_controller {
                 Tarjeta_debito tarjeta_debito = (Tarjeta_debito) tarjeta;
                 float devolucion_iva = tarjeta_debito.getDevolucion_iva();
                 for (Consumo consumo : tarjeta_debito.getConsumo()) {
-                    total += consumo.getTotal() - ((devolucion_iva / 100) * total);
+                    total += consumo.getTotal() - ((devolucion_iva / 100) * consumo.getTotal());
+                    System.out.println("Valor total de consumo, restando devolucion de iva. Tarjeta: " + tarjeta.getNum_tarjeta()  + " $"  + total);
                 }
             }
         }
@@ -118,5 +137,25 @@ public class Tarjeta_controller {
                 return new Tarjeta_debito(cliente, new ArrayList<>(), tarjeta_debito_dto.getNum_tarjeta(), Integer.parseInt((tarjeta_debito_dto.getDevolucion_iva())));
         }
             return null;
+    }
+
+    public static Consumo_DTO toDTO(Consumo consumo) {
+        return new Consumo_DTO(
+                        String.valueOf(consumo.getId()),
+                        String.valueOf(consumo.getMes()),
+                        consumo.getNombre_establecimiento(),
+                        String.valueOf(consumo.getAno()),
+                        String.valueOf(consumo.getTotal())
+        );
+    }
+
+    public static Consumo toModel(Consumo_DTO consumo_dto) {
+        return new Consumo(
+                Integer.parseInt(consumo_dto.getNum_tarjeta()),
+                Integer.parseInt(consumo_dto.getMes()),
+                consumo_dto.getNombre_establecimiento(),
+                Integer.parseInt(consumo_dto.getAno()),
+                Float.parseFloat(consumo_dto.getTotal())
+        );
     }
 }

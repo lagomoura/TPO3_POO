@@ -3,20 +3,17 @@ package model;
 public class Consumo {
     private int id;
     private int mes;
-    private int ano;
     private String nombre_establecimiento;
+    private int ano;
     private float total;
 
-    public Consumo(int id, int mes, int ano, String nombre_establecimiento) {
+    public Consumo( int id, int mes, String nombre_establecimiento, int ano, float total) {
         this.id = id;
         this.mes = mes;
-        this.ano = ano;
         this.nombre_establecimiento = nombre_establecimiento;
+        this.ano = ano;
         this.total = total;
-    }
 
-    public int getId() {
-        return id;
     }
 
     public int getMes() {
@@ -33,5 +30,9 @@ public class Consumo {
 
     public float getTotal() {
         return total;
+    }
+
+    public int getId() {
+        return id;
     }
 }

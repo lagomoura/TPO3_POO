@@ -3,7 +3,6 @@ import model.Cliente;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import dto.Cliente_DTO;
 
@@ -38,29 +37,32 @@ public class Cliente_controller {
     }
 
 
-    public Cliente_DTO obtener_cliente_dni(String dni){
-        for (Cliente cliente : clientes){
-            if (dni != null && !dni.equals(String.valueOf(cliente.getDni()))){
-                return toDTO(cliente);
+    public Cliente obtener_cliente_por_dni(String dni) {
+        for (Cliente cliente : clientes) {
+            if (dni.equals(String.valueOf(cliente.getDni()))) {
+                return cliente;
             }
-        };
-        System.out.println("Cliente ya registrado");
+        }
         return null;
     }
 
-    public boolean crearCliente(Cliente_DTO dto) {
-        if (dto != null && dto.getDniCliente() != null) {
-            for (Cliente cliente : clientes) {
-                if (cliente.getDni() == Integer.parseInt(dto.getDniCliente())) {
-                    System.out.println("Cliente " + cliente.getNombre() + " ya registrado");
-                    return false;
-                }
+
+    public boolean cliente_existe(String dni){
+        for (Cliente cliente : clientes){
+            if (dni.equals(String.valueOf(cliente.getDni()))){
+                return true;
             }
-            clientes.add(toModel(dto));
-            return true;
         }
         return false;
     }
+
+    public void crearCliente(Cliente_DTO dto) {
+        if (!cliente_existe(dto.getDniCliente())) {
+            Cliente cliente = new Cliente(dto.getNombreCliente(), Integer.parseInt(dto.getDniCliente()));
+            clientes.add(toModel(dto));
+        }
+    }
+
 
     public static Cliente_DTO toDTO(Cliente cliente) {
         return new Cliente_DTO(cliente.getNombre(), String.valueOf(cliente.getDni()));
@@ -69,4 +71,6 @@ public class Cliente_controller {
     public static Cliente toModel(Cliente_DTO dto) {
         return new Cliente(dto.getNombreCliente(), Integer.parseInt(dto.getDniCliente()));
     }
+
+
 }
