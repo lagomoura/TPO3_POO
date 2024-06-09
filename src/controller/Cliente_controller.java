@@ -26,17 +26,6 @@ public class Cliente_controller {
     }
 
 
-    public List<Cliente_DTO> buscar_todos_clientes() {
-
-        List <Cliente_DTO> dtos = new ArrayList<>();
-
-        for (Cliente cliente : clientes) {
-            dtos.add(toDTO(cliente));
-        }
-        return dtos;
-    }
-
-
     public Cliente obtener_cliente_por_dni(String dni) {
         for (Cliente cliente : clientes) {
             if (dni.equals(String.valueOf(cliente.getDni()))) {

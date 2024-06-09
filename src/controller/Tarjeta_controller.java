@@ -90,9 +90,10 @@ public class Tarjeta_controller {
                 Tarjeta_credito tarjeta_credito = (Tarjeta_credito) tarjeta;
                 float interes = tarjeta_credito.getInteres();
                 for (Consumo consumo : tarjeta_credito.getConsumo()) {
-                    total += consumo.getTotal() * (1 + (interes / 100));
-                    System.out.println("Valor total de consumo, sumando el interes. Tarjeta: " + tarjeta.getNum_tarjeta() + " $" + total);
+                    total += consumo.getTotal();
                 }
+                total += total * (1 + (interes / 100));
+                System.out.println("Valor total de consumo, sumando el interes. Tarjeta: " + tarjeta.getNum_tarjeta() + " $" + total);
             }
         }
         return total;
@@ -105,9 +106,10 @@ public class Tarjeta_controller {
                 Tarjeta_debito tarjeta_debito = (Tarjeta_debito) tarjeta;
                 float devolucion_iva = tarjeta_debito.getDevolucion_iva();
                 for (Consumo consumo : tarjeta_debito.getConsumo()) {
-                    total += consumo.getTotal() - ((devolucion_iva / 100) * consumo.getTotal());
-                    System.out.println("Valor total de consumo, restando devolucion de iva. Tarjeta: " + tarjeta.getNum_tarjeta()  + " $"  + total);
+                    total += consumo.getTotal();
                 }
+                total += total - ((devolucion_iva / 100) * total);
+                System.out.println("Valor total de consumo, restando devolucion de iva. Tarjeta: " + tarjeta.getNum_tarjeta()  + " $"  + total);
             }
         }
         return total;

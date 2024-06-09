@@ -43,9 +43,13 @@ public class Main {
 
             Consumo_DTO consumo_dto_debito = new Consumo_DTO("222", "100", "2", "2024", "UADE");
             Consumo_DTO consumo_dto_credito = new Consumo_DTO("237", "500", "1", "2024", "Mostaza");
+            Consumo_DTO consumo_dto_credito2 = new Consumo_DTO("237", "150", "3", "2024", "Mcdonald");
+            Consumo_DTO consumo_dto_debito2 = new Consumo_DTO("222", "70", "2", "2024", "YPF");
 
             Tarjeta_controller.getInstance().registro_consumo(consumo_dto_debito.getNum_tarjeta(), consumo_dto_debito);
             Tarjeta_controller.getInstance().registro_consumo(consumo_dto_credito.getNum_tarjeta(), consumo_dto_credito);
+            Tarjeta_controller.getInstance().registro_consumo(consumo_dto_credito2.getNum_tarjeta(), consumo_dto_credito2);
+            Tarjeta_controller.getInstance().registro_consumo(consumo_dto_debito2.getNum_tarjeta(), consumo_dto_debito2);
 
             float total_consumo_credito = tarjeta_controller.consumo_total_credito();
             float total_consumo_debito = tarjeta_controller.consumo_total_debito();
